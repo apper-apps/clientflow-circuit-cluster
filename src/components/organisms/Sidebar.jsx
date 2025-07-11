@@ -167,3 +167,4 @@ const UserProfile = () => {
     </div>
   );
 };
+export default Sidebar;
