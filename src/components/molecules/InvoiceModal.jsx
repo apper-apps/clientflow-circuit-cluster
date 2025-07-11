@@ -24,10 +24,10 @@ const [formData, setFormData] = useState({
       loadProjects();
       if (initialData) {
 setFormData({
-          projectId: initialData.projectId || '',
-          dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
+          projectId: initialData.project_id || '',
+          dueDate: initialData.due_date ? initialData.due_date.split('T')[0] : '',
           status: initialData.status || 'draft',
-          paymentDate: initialData.paymentDate ? initialData.paymentDate.split('T')[0] : '',
+          paymentDate: initialData.payment_date ? initialData.payment_date.split('T')[0] : '',
           lineItems: initialData.lineItems || [{ description: '', amount: 0 }]
         });
       } else {
@@ -101,14 +101,14 @@ setFormData({
     return formData.lineItems.reduce((total, item) => total + (item.amount || 0), 0);
   };
 
-  const getProjectName = (projectId) => {
+const getProjectName = (projectId) => {
     const project = projects.find(p => p.Id === parseInt(projectId));
-    return project ? project.name : 'Unknown Project';
+    return project ? project.Name : 'Unknown Project';
   };
 
   const getProjectClientId = (projectId) => {
     const project = projects.find(p => p.Id === parseInt(projectId));
-    return project ? project.clientId : '';
+    return project ? project.client_id : '';
   };
 
   const validateForm = () => {
@@ -208,9 +208,9 @@ try {
             disabled={loadingProjects}
           >
             <option value="">Select a project</option>
-            {projects.map(project => (
+{projects.map(project => (
               <option key={project.Id} value={project.Id}>
-                {project.name} - Client ID: {project.clientId}
+                {project.Name} - Client ID: {project.client_id}
               </option>
             ))}
           </select>

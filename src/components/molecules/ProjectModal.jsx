@@ -36,16 +36,16 @@ const ProjectModal = ({
   }, [isOpen]);
 
   // Populate form when editing existing project
-  useEffect(() => {
+useEffect(() => {
     if (project) {
       setFormData({
-        name: project.name || '',
+        name: project.Name || '',
         description: project.description || '',
-        clientId: project.clientId || '',
+        clientId: project.client_id || '',
         status: project.status || 'planning',
         budget: project.budget || '',
-        startDate: project.startDate || '',
-        endDate: project.endDate || ''
+        startDate: project.start_date || '',
+        endDate: project.end_date || ''
       });
     } else {
       setFormData({
@@ -127,11 +127,14 @@ const ProjectModal = ({
 
     try {
       setLoading(true);
-      
-      const projectData = {
-        ...formData,
+const projectData = {
+        name: formData.name,
+        description: formData.description,
+        clientId: formData.clientId,
+        status: formData.status,
         budget: formData.budget ? parseFloat(formData.budget) : null,
-        id: project?.id
+        startDate: formData.startDate,
+        endDate: formData.endDate
       };
 
       await onSubmit(projectData);
@@ -154,7 +157,7 @@ const ProjectModal = ({
 
 const getClientName = (clientId) => {
     const client = clients.find(c => c.Id === parseInt(clientId));
-    return client ? client.name : 'Unknown Client';
+    return client ? client.Name : 'Unknown Client';
   };
 
   return (
@@ -218,9 +221,9 @@ const getClientName = (clientId) => {
               required
             >
 <option value="">Select a client</option>
-              {clients.map(client => (
+{clients.map(client => (
                 <option key={client.Id} value={client.Id}>
-                  {client.name}
+                  {client.Name}
                 </option>
               ))}
             </select>

@@ -18,10 +18,10 @@ const [formData, setFormData] = useState({
   const [errors, setErrors] = useState({});
 
   // Initialize form data when client prop changes (for edit mode)
-  React.useEffect(() => {
+React.useEffect(() => {
     if (mode === "edit" && client) {
       setFormData({
-        name: client.name || "",
+        name: client.Name || "",
         email: client.email || "",
         company: client.company || "",
         notes: client.notes || "",
@@ -86,12 +86,22 @@ const [formData, setFormData] = useState({
 setLoading(true);
     
     try {
-      if (mode === "edit") {
-        const updatedClient = await updateClient(client.Id, formData);
+if (mode === "edit") {
+        const updatedClient = await updateClient(client.Id, {
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          status: formData.status
+        });
         toast.success("Client updated successfully!");
         onClientUpdated?.(updatedClient);
       } else {
-        const newClient = await createClient(formData);
+        const newClient = await createClient({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          status: formData.status
+        });
         toast.success("Client created successfully!");
         onClientCreated?.(newClient);
       }

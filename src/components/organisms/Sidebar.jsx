@@ -1,9 +1,11 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import NavigationItem from "@/components/molecules/NavigationItem";
-import ApperIcon from "@/components/ApperIcon";
+import React, { useContext } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSelector } from "react-redux";
 import { useSidebar } from "@/hooks/useSidebar";
-
+import { AuthContext } from "../../App";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import NavigationItem from "@/components/molecules/NavigationItem";
 const Sidebar = () => {
   const { isOpen, closeSidebar } = useSidebar();
 
@@ -40,20 +42,8 @@ const navigationItems = [
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg">
-            <div className="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center">
-              <ApperIcon name="User" size={16} className="text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                John Doe
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                Freelancer
-              </p>
-            </div>
-          </div>
+<div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <UserProfile />
         </div>
       </div>
     </div>
@@ -110,20 +100,8 @@ const navigationItems = [
                 ))}
               </nav>
 
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg">
-                  <div className="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center">
-                    <ApperIcon name="User" size={16} className="text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      John Doe
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      Freelancer
-                    </p>
-                  </div>
-                </div>
+<div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                <UserProfile />
               </div>
             </div>
           </motion.div>
@@ -132,12 +110,60 @@ const navigationItems = [
     </AnimatePresence>
   );
 
-  return (
+return (
     <>
       <DesktopSidebar />
       <MobileSidebar />
     </>
   );
 };
+// User Profile Component
+const UserProfile = () => {
+  const { logout } = useContext(AuthContext);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
-export default Sidebar;
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const userDisplayName = user.firstName && user.lastName 
+    ? `${user.firstName} ${user.lastName}` 
+    : user.name || user.emailAddress || 'User';
+  
+  const userRole = user.accounts?.[0]?.companyName || 'Freelancer';
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg">
+        <div className="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-600 rounded-full flex items-center justify-center">
+          <ApperIcon name="User" size={16} className="text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+            {userDisplayName}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            {userRole}
+          </p>
+        </div>
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleLogout}
+        className="w-full"
+      >
+        <ApperIcon name="LogOut" size={14} className="mr-2" />
+        Logout
+      </Button>
+    </div>
+  );
+};

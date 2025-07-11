@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import React, { useEffect, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import Card from "@/components/atoms/Card";
+import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
+import Card from "@/components/atoms/Card";
+import { getActiveTimer, startTimer, stopTimer } from "@/services/api/timeTrackingService";
 import { updateTaskStatus } from "@/services/api/taskService";
-import { startTimer, stopTimer, getActiveTimer } from "@/services/api/timeTrackingService";
 
 const KanbanBoard = ({ tasks, onTaskUpdate, projectId = null }) => {
   const [draggedTask, setDraggedTask] = useState(null);
@@ -21,8 +21,8 @@ const KanbanBoard = ({ tasks, onTaskUpdate, projectId = null }) => {
     { id: "done", title: "Done", color: "bg-green-500" }
   ];
 
-  const filteredTasks = projectId 
-    ? tasks.filter(task => task.projectId === String(projectId))
+const filteredTasks = projectId 
+    ? tasks.filter(task => task.project_id === String(projectId))
     : tasks;
 
   const getTasksByStatus = (status) => {
@@ -208,13 +208,12 @@ const KanbanBoard = ({ tasks, onTaskUpdate, projectId = null }) => {
                                     {task.priority}
                                   </Badge>
                                 </div>
-
-                                <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+<div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                                   <div className="flex items-center gap-1">
                                     <ApperIcon name="Calendar" size={12} />
-                                    <span>{formatDate(task.dueDate)}</span>
+                                    <span>{formatDate(task.due_date)}</span>
                                   </div>
-                                  {isOverdue(task.dueDate) && task.status !== "done" && (
+                                  {isOverdue(task.due_date) && task.status !== "done" && (
                                     <Badge variant="error" size="sm">
                                       Overdue
                                     </Badge>
@@ -262,9 +261,8 @@ const KanbanBoard = ({ tasks, onTaskUpdate, projectId = null }) => {
                                     {activeTimers.has(task.Id) ? "Stop" : "Start"}
                                   </Button>
                                 </div>
-
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
-                                  Project: {task.projectId}
+<div className="text-xs text-gray-500 dark:text-gray-400">
+                                  Project: {task.project_id}
                                 </div>
                               </div>
                             </Card>
